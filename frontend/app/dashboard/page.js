@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../lib/useAuth";
 import { api } from "../../lib/api";
 import NavBar from "../../components/NavBar";
+import FloatingChat from "../../components/FloatingChat";
 import {
   BarChart,
   Bar,
@@ -72,6 +73,7 @@ export default function DashboardPage() {
           </>
         )}
       </main>
+      <FloatingChat />
     </div>
   );
 }

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "../../../lib/useAuth";
 import { api } from "../../../lib/api";
 import NavBar from "../../../components/NavBar";
+import FloatingChat from "../../../components/FloatingChat";
 
 export default function CustomerDetailPage() {
   const { id } = useParams();
@@ -23,6 +24,14 @@ export default function CustomerDetailPage() {
   const [chatLoading, setChatLoading] = useState(false);
 
   const [uploading, setUploading] = useState(false);
+
+  const chatScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [chatMessages, chatLoading]);
 
   function refresh() {
     api.getCustomer(id).then(setCustomer).catch((err) => setError(err.message));
@@ -192,21 +201,31 @@ export default function CustomerDetailPage() {
 
         {/* Chatbot */}
         <Section title="Ask the AI about this customer">
-          <div className="mb-3 max-h-64 space-y-2 overflow-y-auto rounded-md bg-slate-50 p-3">
+          <div
+            ref={chatScrollRef}
+            className="mb-3 flex h-72 flex-col space-y-2 overflow-y-auto rounded-md bg-slate-50 p-3"
+          >
+            {chatMessages.length === 0 && (
+              <p className="text-sm text-slate-400">Ask anything about this customer.</p>
+            )}
             {chatMessages.map((m) => (
               <div key={m.id} className={m.role === "user" ? "text-right" : "text-left"}>
                 <span
                   className={
                     "inline-block max-w-[80%] rounded-md px-3 py-1.5 text-sm " +
-                    (m.role === "user" ? "bg-slate-900 text-white" : "bg-white text-slate-800")
+                    (m.role === "user" ? "bg-slate-900 text-white" : "bg-white text-slate-800 shadow-sm")
                   }
                 >
                   {m.content}
                 </span>
               </div>
             ))}
-            {chatMessages.length === 0 && (
-              <p className="text-sm text-slate-400">Ask anything about this customer.</p>
+            {chatLoading && (
+              <div className="text-left">
+                <span className="inline-block rounded-md bg-white px-3 py-1.5 text-sm text-slate-400 shadow-sm">
+                  Thinking...
+                </span>
+              </div>
             )}
           </div>
           <form onSubmit={handleChatSend} className="flex gap-2">
@@ -214,18 +233,20 @@ export default function CustomerDetailPage() {
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               placeholder="Type a question..."
-              className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm"
+              disabled={chatLoading}
+              className="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm disabled:opacity-50"
             />
             <button
               type="submit"
               disabled={chatLoading}
               className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
             >
-              Send
+              {chatLoading ? "Sending..." : "Send"}
             </button>
           </form>
         </Section>
       </main>
+      <FloatingChat />
     </div>
   );
 }

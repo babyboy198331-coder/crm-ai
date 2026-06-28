@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuth } from "../../lib/useAuth";
 import { api } from "../../lib/api";
 import NavBar from "../../components/NavBar";
+import FloatingChat from "../../components/FloatingChat";
 
 export default function CustomersPage() {
   const { user, loading: authLoading, logout } = useAuth();
@@ -131,6 +132,7 @@ export default function CustomersPage() {
           </table>
         </div>
       </main>
+      <FloatingChat />
     </div>
   );
 }
