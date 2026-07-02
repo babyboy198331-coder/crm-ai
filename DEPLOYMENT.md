@@ -2,7 +2,7 @@
 
 ## Current status (live)
 
-Both services are deployed on Railway, in project **just-youthfulness**, from the GitHub repo `babyboy198331-coder/crm-ai`. Pushing to `main` auto-redeploys both.
+Both services are deployed on Railway, in project **just-youthfulness**, from the GitHub repo `jbass-dev/crm-ai`. Pushing to `main` auto-redeploys both.
 
 | Service | Root dir | URL | Status |
 |---|---|---|---|
